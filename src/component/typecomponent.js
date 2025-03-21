@@ -79,7 +79,7 @@ export default function TypeComponent() {
     try {
       await updateDoc(doc(db, "type", docId), { [field]: value });
     } catch (error) {
-      console.error("Lỗi cập nhật document:", error);
+      console.error("Lỗi cập nhật document:  ", error);
     } finally {
       setEditing({ docId: null, field: "", value: "" });
     }
