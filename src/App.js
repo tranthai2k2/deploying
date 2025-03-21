@@ -1,14 +1,13 @@
-import React from 'react';
-import './App.css';
-
-function App() {
+import React from "react";
+import TagComponent from "./component/tagcomponent";
+import AllTags from "./component/alltag";
+import
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>xin chào đến web của tôi</h1>
-      </header>
+    <div>
+      <TagComponent></TagComponent>
+      <AllTags></AllTags>
+      <typecommponent></typecommponent>
     </div>
   );
 }
-
-export default App;
