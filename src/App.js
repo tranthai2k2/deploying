@@ -1,12 +1,11 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1> hi mi name</h1>
-        
+        <h1>xin chào đến web của tôi</h1>
       </header>
     </div>
   );
