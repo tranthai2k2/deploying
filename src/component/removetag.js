@@ -11,6 +11,7 @@ export default function RemoveTag() {
   const [selectAll, setSelectAll] = useState(false);
   const [inputText, setInputText] = useState("");
   const [outputText, setOutputText] = useState("");
+  const [inputFormat, setInputFormat] = useState("gelbooru"); // Mặc định gelbooru
 
   // Lấy dữ liệu từ Firebase
   useEffect(() => {
@@ -74,20 +75,37 @@ export default function RemoveTag() {
     }
   };
 
-  // Xử lý input để loại bỏ tag
-  const processTags = () => {
-    const inputTags = inputText
-      .split(",")
-      .map((t) => t.trim().toLowerCase())
-      .filter((t) => t.length > 0);
+  // Hàm xử lý đầu vào theo định dạng Gelbooru
+  const processGelbooruInput = (text) => {
+    // Tách theo ký tự '?' và loại bỏ phần rỗng
+    const segments = text.split("?").map(seg => seg.trim()).filter(seg => seg !== "");
+    // Mỗi segment có dạng: tag + số (vd: "1girl 7511694"), loại bỏ phần số ở cuối
+    const tags = segments.map(seg => seg.replace(/\s+\d+$/, "").trim());
+    return tags;
+  };
 
+  // Xử lý đầu vào để chuyển thành mảng tag dựa theo định dạng đã chọn
+  const processInputText = () => {
+    if (inputFormat === "gelbooru") {
+      return processGelbooruInput(inputText);
+    } else {
+      // Mặc định: tách theo dấu phẩy
+      return inputText
+        .split(",")
+        .map((t) => t.trim().toLowerCase())
+        .filter((t) => t.length > 0);
+    }
+  };
+
+  // Xử lý input để loại bỏ tag theo type đã chọn
+  const processTags = () => {
+    const inputTags = processInputText();
     let tagsToRemove = new Set();
     selectedTypes.forEach((type) => {
       if (tagsByType[type]) {
         tagsByType[type].forEach((t) => tagsToRemove.add(t));
       }
     });
-
     const filtered = inputTags.filter((t) => !tagsToRemove.has(t));
     setOutputText(filtered.join(", "));
   };
@@ -95,6 +113,22 @@ export default function RemoveTag() {
   return (
     <div className="container py-4">
       <h3 className="mb-4 text-center">Loại bỏ các Tag theo Type được chọn</h3>
+
+      {/* Dropdown chọn định dạng đầu vào */}
+      <div className="mb-4">
+        <label htmlFor="inputFormat" className="form-label fw-bold">
+          Chọn định dạng đầu vào
+        </label>
+        <select
+          id="inputFormat"
+          className="form-select"
+          value={inputFormat}
+          onChange={(e) => setInputFormat(e.target.value)}
+        >
+          <option value="gelbooru">Gelbooru</option>
+          <option value="default">Mặc định (phân cách bằng dấu phẩy)</option>
+        </select>
+      </div>
 
       {/* Checkbox cho các type */}
       <div className="card mb-4">
@@ -136,13 +170,13 @@ export default function RemoveTag() {
       {/* Input textarea */}
       <div className="mb-4">
         <label htmlFor="inputText" className="form-label fw-bold">
-          Input (danh sách tag, phân cách bằng dấu phẩy)
+          Input (danh sách tag)
         </label>
         <textarea
           id="inputText"
           className="form-control"
           rows="5"
-          placeholder="Ví dụ: 1girl, long hair"
+          placeholder='Ví dụ cho định dạng Gelbooru: ? 1girl 7511694? blue ribbon 74058? breasts 4786372? brown hair 1888683?...'
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
         />
@@ -151,7 +185,7 @@ export default function RemoveTag() {
       {/* Nút Process */}
       <div className="text-center mb-4">
         <button className="btn btn-primary btn-lg" onClick={processTags}>
-          Process
+          Xử lý
         </button>
       </div>
 

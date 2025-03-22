@@ -12,7 +12,7 @@ export default function App() {
           <div className="collapse navbar-collapse">
             <ul className="navbar-nav me-auto">
               <li className="nav-item">
-                <Link className="nav-link" to="/">RemoveTag</Link>
+                <Link className="nav-link" to="/deploying">RemoveTag</Link>
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/tagtype">TagType</Link>
@@ -32,7 +32,7 @@ export default function App() {
               </div>
             } 
           />
-          <Route path="/" element={<RemoveTag />} />
+          <Route path="/deploying" element={<RemoveTag />} />
           <Route path="/tagtype" element={<TagType />} />
         </Routes>
       </div>
