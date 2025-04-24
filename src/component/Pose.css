@@ -1,0 +1,19 @@
+.cards-container {
+    /* Number of columns you want in your layout */
+    columns: 5;
+  
+    /* Space between columns */
+    column-gap: 10px;
+  
+    /* If you want some margin at the bottom */
+    margin-bottom: 1rem;
+  }
+  
+  /* Ensures that each card is displayed independently without splitting */
+  .card {
+    display: block; /* ensures the card doesn't span the full column width */
+    width: 100%;          /* so it fills the column width */
+    margin-bottom: 1rem;
+    break-inside: avoid;  /* avoids splitting the card between columns */
+  }
+  
