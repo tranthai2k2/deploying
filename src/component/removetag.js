@@ -122,7 +122,7 @@ export default function RemoveTag() {
 
   return (
     <div className="container py-4">
-      <h3 className="mb-4 text-center">Loại bỏ các Tag theo Type được chọn</h3>
+      <h3 className="mb-4 text-center"> remove tags</h3>
       <div className="row">
         {/* Cột bên trái */}
         <div className="col-md-6">
