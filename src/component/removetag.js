@@ -4,6 +4,22 @@ import { collection, onSnapshot } from "firebase/firestore";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaChevronDown, FaChevronRight, FaSearch } from "react-icons/fa";
 
+// Số lượng ở cuối tag: 8300000 (Gelbooru) | 8.3M | 609k | 386 | 1,234 (Danbooru)
+const COUNT_SUFFIX = /\s+\d[\d.,]*\s*[kKmM]?$/;
+
+// Nhận cả Gelbooru ("? 1girl 8300000"), Danbooru ("?\n1girl 8.3M") và danh sách "a, b, c"
+export function parseTagInput(text) {
+  const isBooru = text.includes("?");
+  return text
+    .split(isBooru ? /[?\n,]+/ : /[\n,]+/)
+    .map((seg) => {
+      const tag = seg.trim();
+      return isBooru ? tag.replace(COUNT_SUFFIX, "").trim() : tag;
+    })
+    .filter(Boolean)
+    .map((tag) => tag.toLowerCase());
+}
+
 export default function RemoveTag() {
   const [firebaseTags, setFirebaseTags] = useState([]);
   const [uniqueTypes, setUniqueTypes] = useState([]);
@@ -46,32 +62,9 @@ export default function RemoveTag() {
     setTagsByType(mapping);
   }, [firebaseTags]);
 
-  // Hàm chuyển đổi đầu vào về dạng mảng tag, tự động phát hiện kiểu nhập
-  const processInputText = () => {
-    const cleanedInput = inputText.trim(); // <-- Loại bỏ khoảng trắng đầu và cuối
-    let tags = [];
-  
-    if (cleanedInput.includes("?")) {
-      tags = cleanedInput
-        .split("?")
-        .map((seg) => seg.replace(/\s+\d+$/, "").trim())
-        .filter((seg) => seg !== "");
-    } else if (cleanedInput.includes(",")) {
-      tags = cleanedInput
-        .split(",")
-        .map((seg) => seg.trim())
-        .filter((seg) => seg !== "");
-    } else {
-      tags = [cleanedInput];
-    }
-  
-    return tags.map((t) => t.toLowerCase());
-  };
-  
-
   // Xử lý input để loại bỏ các tag thuộc type được chọn
   const processTags = () => {
-    const inputTags = processInputText();
+    const inputTags = parseTagInput(inputText);
     const tagsToRemove = new Set();
     selectedTypes.forEach((type) => {
       if (tagsByType[type]) {
@@ -131,7 +124,7 @@ export default function RemoveTag() {
             <textarea
               className="form-control"
               rows="5"
-              placeholder='Nhập tag (dùng "?" cho Gelbooru hoặc "," cho mặc định)...'
+              placeholder='Nhập tag (dán trực tiếp từ Gelbooru/Danbooru, hoặc danh sách "," )...'
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
             />
